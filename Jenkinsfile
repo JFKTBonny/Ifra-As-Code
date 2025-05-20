@@ -10,9 +10,10 @@ pipeline {
         SONARQUBE_TOKEN = credentials('sonar-token')
         NVD_API_KEY = credentials('NVD-API')
         GITHUB_EMAIL = credentials('github-email')
-        // GITHUB_TOKEN = credentials('github-token')
+        GITHUB_TOKEN = credentials('github-jenkins-token')
         DOCKERHUB_CREDENTIALS = "dockerhub-access-credentials" 
         DOCKER_IMAGE_NAME = 'santonix/spring-app'
+        SONAR_PROJECT_KEY = 'CI_CD_MAVEN_PROJECT'
     }
 
     stages {
@@ -46,9 +47,12 @@ pipeline {
                 script {
                     // Run SonarQube analysis
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                        sh "./mvnw sonar:sonar " +
-                           "-Dsonar.projectKey=${SONAR_PROJECT_KEY} " +
-                           "-Dsonar.login=${SONARQUBE_TOKEN}"
+                        sh """
+                        sonar-scanner \
+                            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.login=$SONAR_TOKEN
+                        """
                     }
                 }
             }
