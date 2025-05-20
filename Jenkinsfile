@@ -3,16 +3,16 @@ pipeline {
 
     environment {
         // Define SonarQube environment variables
-        SONARQUBE_SERVER = 'sonar-server'  
-        GITHUB_REPO = 'https://github.com/yahialm/CICD-pipeline-with-Jenkins-ArgoCD-Sonar-and-K8s.git'
-        GITHUB_REPO_MANIFEST = 'https://github.com/yahialm/ArgoCD-pipeline-manifest-files.git'
-        SONAR_PROJECT_KEY = credentials('sonar-project') 
+        SONARQUBE_SERVER = 'sonar server'  
+        GITHUB_REPO = 'https://github.com/JFKTBonny/Ifra-As-Code.git'
+        // GITHUB_REPO_MANIFEST = 'https://github.com/yahialm/ArgoCD-pipeline-manifest-files.git'
+        SONAR_HOST_URL = 'http://192.168.1.40:9000/'
         SONARQUBE_TOKEN = credentials('sonar-token')
         NVD_API_KEY = credentials('NVD-API')
         GITHUB_EMAIL = credentials('github-email')
         // GITHUB_TOKEN = credentials('github-token')
-        DOCKERHUB_CREDENTIALS = "docker-hub-credentials-id" 
-        DOCKER_IMAGE_NAME = 'yahialm/spring'
+        DOCKERHUB_CREDENTIALS = "dockerhub-access-credentials" 
+        DOCKER_IMAGE_NAME = 'santonix/spring-app'
     }
 
     stages {

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: my-app-container
-        image: yahialm/spring:78
+        image: santonix/spring-app:v1.0.0 
         ports:
         - containerPort: 8085
         env:
