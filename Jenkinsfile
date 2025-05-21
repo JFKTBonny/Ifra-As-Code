@@ -71,17 +71,19 @@ pipeline {
         stage('OWASP Dependency Check Scan and Publish') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: """
-                    -o './' 
-                    -s './'
-                    -f 'ALL' 
-                    --prettyPrint
-                    --nvdApiKey ${NVD_API_KEY} """, odcInstallation: "DP-CHECK"
+                    // Inject the secret securely from Jenkins credentials
+                    withCredentials([string(credentialsId: 'NVD-API', variable: 'NVD_API_KEY')]) {
+                        // Pass additionalArguments as a single string without Groovy interpolation for the secret
+                        dependencyCheck additionalArguments: "-o './' -s './' -f 'ALL' --prettyPrint --nvdApiKey $NVD_API_KEY", odcInstallation: "DP-CHECK"
 
-                    dependencyCheckPublisher pattern: 'dependency-check-report.html'
+                        dependencyCheckPublisher pattern: 'dependency-check-report.html'
+                    }
                 }
             }
+
         }
+
+
 
         stage('Build Docker Image') {
             steps {
