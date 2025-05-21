@@ -1,8 +1,6 @@
 pipeline {
     agent any
-    tools {
-       sonarScanner 'sonar-scanner' // this name must match what you defined above
-    }
+    
 
     environment {
         // Define SonarQube environment variables
