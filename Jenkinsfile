@@ -121,7 +121,7 @@ pipeline {
         stage('Push Docker Image to DockerHub') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: "docker-hub-credentials-id", url: "https://index.docker.io/v1/"]) {
+                    withDockerRegistry([credentialsId: "dockerhub-access-credentials", url: "https://index.docker.io/v1/"]) {
                         // Push the Docker image to DockerHub
                         sh "docker push ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}"
                     }
@@ -133,14 +133,15 @@ pipeline {
             steps {
                 script {
                     // Use credentials to authenticate with GitHub
-                    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'github-jenkins-token', variable: 'GITHUB_TOKEN')]) {
                         // Clone the private manifest repo using the token
                         sh """
-                        if [ -d "ArgoCD-pipeline-manifest-files" ]; then
-                             rm -rf ArgoCD-pipeline-manifest-files
+                        if [ -d "Ifra-As-Code" ]; then
+                             rm -rf Ifra-As-Code
+
                         fi
-                        git clone https://${GITHUB_TOKEN}@github.com/yahialm/ArgoCD-pipeline-manifest-files.git
-                        cd ArgoCD-pipeline-manifest-files/k3s
+                        git clone https://${GITHUB_TOKEN}@git@github.com:JFKTBonny/Ifra-As-Code.git
+                        cd Ifra-As-Code/k8s
                         sed -i 's|image: .*|image: ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}|' deployment.yaml
                         """
 
@@ -149,12 +150,12 @@ pipeline {
                         // in its own sh """""", that might create problems for the next commands because they will  
                         // be executed in the default path which is the workspace but not inside ArgoCD-pipeline-manifest-files
                         sh """
-                            cd ArgoCD-pipeline-manifest-files
+                            cd Ifra-As-Code
                             git config --global user.email "${GITHUB_EMAIL}"
-                            git config --global user.name "yahialm"
-                            git add k3s/deployment.yaml
+                            git config --global user.name "JFKTBonny"
+                            git add k8s/deployment.yaml
                             git commit -m "Updated image to ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}"
-                            git push https://${GITHUB_TOKEN}@github.com/yahialm/ArgoCD-pipeline-manifest-files.git main
+                            git push https://${GITHUB_TOKEN}@git@github.com:JFKTBonny/Ifra-As-Code.git main
                         """
                     }
                 }
