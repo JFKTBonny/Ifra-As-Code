@@ -8,7 +8,7 @@ pipeline {
         GITHUB_REPO = 'https://github.com/JFKTBonny/Ifra-As-Code.git'
         // GITHUB_REPO_MANIFEST = 'https://github.com/yahialm/ArgoCD-pipeline-manifest-files.git'
         SONAR_HOST_URL = 'http://192.168.1.40:9000/'
-        SONARQUBE_TOKEN = credentials('sonar-token')
+        SONAR_AUTH_TOKEN = credentials('sonar-token')
         NVD_API_KEY = credentials('NVD-API')
         GITHUB_EMAIL = credentials('github-email')
         GITHUB_TOKEN = credentials('github-jenkins-token')
@@ -45,15 +45,21 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    // Run SonarQube analysis
-                    withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                        sh """
-                        sonar-scanner \
-                            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-                            -Dsonar.host.url=$SONAR_HOST_URL \
-                            -Dsonar.login=$SONAR_TOKEN
-                        """
+                withSonarQubeEnv('MySonarQubeServer') { // Name configured in Jenkins
+                    sh 'sonar-scanner -Dsonar.projectKey=CI_CD_MAVEN_PROJECT -Dsonar.sources=src -Dsonar.host.url=http://192.168.1.40:9000/ -Dsonar.login=$SONAR_AUTH_TOKEN'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                // Wait for SonarQube quality gate result and abort pipeline if it fails
+                timeout(time: 1, unit: 'HOURS') { // optional timeout
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
                     }
                 }
             }
