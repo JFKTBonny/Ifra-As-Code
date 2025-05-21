@@ -140,7 +140,7 @@ pipeline {
                              rm -rf Ifra-As-Code
 
                         fi
-                        git clone https://${GITHUB_TOKEN}@git@github.com:JFKTBonny/Ifra-As-Code.git
+                        git clone https://${GITHUB_TOKEN}@github.com/JFKTBonny/Ifra-As-Code.git
                         cd Ifra-As-Code/k8s
                         sed -i 's|image: .*|image: ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}|' deployment.yaml
                         """
@@ -155,7 +155,7 @@ pipeline {
                             git config --global user.name "JFKTBonny"
                             git add k8s/deployment.yaml
                             git commit -m "Updated image to ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}"
-                            git push https://${GITHUB_TOKEN}@git@github.com:JFKTBonny/Ifra-As-Code.git main
+                            git push https://${GITHUB_TOKEN}@github.com/JFKTBonny/Ifra-As-Code.git main
                         """
                     }
                 }
