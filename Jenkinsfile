@@ -153,7 +153,7 @@ pipeline {
                             cd Ifra-As-Code
                             git config --global user.email "${GITHUB_EMAIL}"
                             git config --global user.name "JFKTBonny"
-                            git add k8s/deployment.yaml
+                            git add k8s/deploy.yaml
                             git commit -m "Updated image to ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}"
                             git push https://${GITHUB_TOKEN}@github.com/JFKTBonny/Ifra-As-Code.git main
                         """
