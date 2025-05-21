@@ -76,7 +76,7 @@ pipeline {
                     -s './'
                     -f 'ALL' 
                     --prettyPrint
-                    --nvdApiKey ${NVD_API_KEY} """, odcInstallation: "dependency-check"
+                    --nvdApiKey ${NVD_API_KEY} """, odcInstallation: "DP-CHECK"
 
                     dependencyCheckPublisher pattern: 'dependency-check-report.html'
                 }
