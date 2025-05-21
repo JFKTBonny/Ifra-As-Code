@@ -15,6 +15,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = "dockerhub-access-credentials" 
         DOCKER_IMAGE_NAME = 'santonix/spring-app'
         SONAR_PROJECT_KEY = 'CI_CD_MAVEN_PROJECT'
+        SCANNER_HOME=tool 'sonar-scanner'
     }
 
     stages {
@@ -43,14 +44,16 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('MySonarQubeServer') { // Name configured in Jenkins
-                    sh 'sonar-scanner -Dsonar.projectKey=CI_CD_MAVEN_PROJECT -Dsonar.sources=src -Dsonar.host.url=http://192.168.1.40:9000/ -Dsonar.login=$SONAR_AUTH_TOKEN'
+        stage("Sonarqube Analysis "){
+            steps{
+                withSonarQubeEnv('sonar server') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=CI_CD_MAVEN_PROJECT \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.projectKey=CI_CD_MAVEN_PROJECT '''
+    
                 }
             }
         }
-
         stage('Quality Gate') {
             steps {
                 // Wait for SonarQube quality gate result and abort pipeline if it fails
